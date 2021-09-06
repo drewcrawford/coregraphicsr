@@ -1,8 +1,10 @@
 mod cgcolor;
+mod cgdirectdisplay;
 
 use objr::bindings::*;
 
 pub use cgcolor::CGColorRef;
+pub use cgdirectdisplay::CGDirectDisplayID;
 
 pub type CGFloat = f64;
 
@@ -16,6 +18,8 @@ unsafe impl Primitive for CGPoint {}
 unsafe impl Arguable for CGPoint {}
 #[repr(C)]
 #[derive(Debug)]
+#[derive(PartialEq)]
+#[derive(Copy,Clone)]
 pub struct CGSize {
     pub width: CGFloat,
     pub height: CGFloat
