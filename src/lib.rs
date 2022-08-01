@@ -29,7 +29,7 @@ pub use cgdirectdisplay::CGDirectDisplayID;
 pub type CGFloat = f64;
 
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug,Copy,Clone)]
 pub struct CGPoint {
     pub x: CGFloat,
     pub y: CGFloat
@@ -48,7 +48,7 @@ unsafe impl Primitive for CGSize {}
 unsafe impl Arguable for CGSize {}
 
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug,Copy,Clone)]
 pub struct CGRect {
     pub origin: CGPoint,
     pub size: CGSize
