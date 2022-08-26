@@ -62,4 +62,8 @@ impl CGRect {
             size: CGSize { width, height}
         }
     }
+    pub const ZERO: CGRect = CGRect {
+        origin: CGPoint { x: 0.0, y: 0.0 },
+        size: CGSize { width: 0.0, height: 0.0 }
+    };
 }
