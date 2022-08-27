@@ -34,6 +34,9 @@ pub struct CGPoint {
     pub x: CGFloat,
     pub y: CGFloat
 }
+impl CGPoint {
+    pub const ZERO: CGPoint  = CGPoint { x: 0.0, y: 0.0 };
+}
 unsafe impl Primitive for CGPoint {}
 unsafe impl Arguable for CGPoint {}
 #[repr(C)]
