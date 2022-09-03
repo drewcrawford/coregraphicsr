@@ -1,7 +1,22 @@
 use std::ffi::c_void;
 use core_foundationr::CFString;
-pub struct CGColorSpace(c_void);
 
+#[repr(transparent)]
+pub struct CGColorSpace(c_void);
+/*
+Design note about wrapping types.
+
+We generally use core_foundationr::StrongCell for CF types (although objr::bindings::StrongCell is also available for types that are bridged).
+
+Another option is CGColorSpaceRetain and CGColorSpaceRelease.  The headers suggest that this is "equivalent to CFRelease" (that is, core_foundationr::StrongCell), "except it doesn't crash (as CFRelease
+   does) if `space' is NULL."
+
+   It's not immediately clear to me why we would be passing NULL to CGColorSpaceRelease, in a language with proper optionals in the typesystem.  So I think I am going to follow StrongCell convention rather
+   than introducing yet a third convention.
+ */
+impl core_foundationr::CFType for CGColorSpace {
+
+}
 extern "C" {
     static  kCGColorSpaceGenericGray: &'static CFString;
     static kCGColorSpaceGenericRGB: &'static CFString;
@@ -40,7 +55,8 @@ extern "C" {
     static kCGColorSpaceExtendedGray: &'static CFString;
     static kCGColorSpaceExtendedLinearGray: &'static CFString;
 }
-impl CGColorSpace {
+pub struct Name;
+impl Name {
     pub fn generic_gray() -> &'static CFString {
         unsafe { kCGColorSpaceGenericGray }
     }
@@ -149,5 +165,22 @@ impl CGColorSpace {
     pub fn extended_linear_gray() -> &'static CFString {
         unsafe { kCGColorSpaceExtendedLinearGray }
     }
+}
 
+extern "C" {
+    fn CGColorSpaceCreateWithName(name: &CFString) -> *mut CGColorSpace;
+}
+
+impl CGColorSpace {
+    ///CGColorSpaceCreateWithName
+    pub fn with_name(name: &CFString) -> core_foundationr::StrongCell<Self> {
+        unsafe {
+            let color_space = CGColorSpaceCreateWithName(name);
+            core_foundationr::StrongCell::assuming_retained(color_space)
+        }
+    }
+}
+
+#[test] fn create() {
+    let _ = CGColorSpace::with_name(&Name::generic_rgb());
 }

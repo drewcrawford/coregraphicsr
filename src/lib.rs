@@ -16,17 +16,21 @@ The following APIs are implemented
 * CGPoint, CGFloat, CGSize, and CGRect
 * CGColor (greyscale only currently)
 * CGDirectDisplayID
+* CGColorSpace
+* CGImageAlphaInfo
 
 */
 mod cgcolor;
 mod cgdirectdisplay;
 mod cgcolorspace;
+mod cgimage;
 
 use objr::bindings::*;
 
 pub use cgcolor::CGColorRef;
 pub use cgdirectdisplay::CGDirectDisplayID;
 pub use cgcolorspace::*;
+pub use cgimage::*;
 
 pub type CGFloat = f64;
 
@@ -72,3 +76,5 @@ impl CGRect {
         size: CGSize { width: 0.0, height: 0.0 }
     };
 }
+
+#[link(name="CoreGraphics", kind="framework")] extern "C" {}
