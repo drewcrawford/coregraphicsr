@@ -20,11 +20,13 @@ The following APIs are implemented
 */
 mod cgcolor;
 mod cgdirectdisplay;
+mod cgcolorspace;
 
 use objr::bindings::*;
 
 pub use cgcolor::CGColorRef;
 pub use cgdirectdisplay::CGDirectDisplayID;
+pub use cgcolorspace::*;
 
 pub type CGFloat = f64;
 
