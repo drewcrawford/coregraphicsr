@@ -24,6 +24,7 @@ mod cgcolor;
 mod cgdirectdisplay;
 mod cgcolorspace;
 mod cgimage;
+mod cgbitmapcontext;
 
 use objr::bindings::*;
 
@@ -31,6 +32,7 @@ pub use cgcolor::CGColorRef;
 pub use cgdirectdisplay::CGDirectDisplayID;
 pub use cgcolorspace::*;
 pub use cgimage::*;
+pub use cgbitmapcontext::*;
 
 pub type CGFloat = f64;
 

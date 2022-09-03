@@ -176,7 +176,7 @@ impl CGColorSpace {
     pub fn with_name(name: &CFString) -> core_foundationr::StrongCell<Self> {
         unsafe {
             let color_space = CGColorSpaceCreateWithName(name);
-            core_foundationr::StrongCell::assuming_retained(color_space)
+            core_foundationr::StrongCell::assuming_retained_nonnull(color_space)
         }
     }
 }
