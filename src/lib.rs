@@ -1,3 +1,5 @@
+extern crate core;
+
 /**
 Provides select Rust bindings for Apple [Core Graphics](https://developer.apple.com/documentation/coregraphics).  May be compared to [objrs_frameworks_core_graphics](https://crates.io/crates/objrs_frameworks_core_graphics)
 and [core-graphics](https://crates.io/crates/core-graphics).
@@ -18,6 +20,8 @@ The following APIs are implemented
 * CGDirectDisplayID
 * CGColorSpace
 * CGImageAlphaInfo
+* CGContext, CGBitmapContext
+* CGDataProvider, CGDataProviderCreateDirect
 
 */
 mod cgcolor;
@@ -25,6 +29,7 @@ mod cgdirectdisplay;
 mod cgcolorspace;
 mod cgimage;
 mod cgbitmapcontext;
+mod cgdataprovider;
 
 use objr::bindings::*;
 
@@ -33,6 +38,7 @@ pub use cgdirectdisplay::CGDirectDisplayID;
 pub use cgcolorspace::*;
 pub use cgimage::*;
 pub use cgbitmapcontext::*;
+pub use cgdataprovider::*;
 
 pub type CGFloat = f64;
 

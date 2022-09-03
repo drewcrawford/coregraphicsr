@@ -15,3 +15,7 @@ The following APIs are implemented
 * CGPoint, CGFloat, CGSize, and CGRect
 * CGColor (greyscale only currently)
 * CGDirectDisplayID
+* CGColorSpace
+* CGImageAlphaInfo
+* CGContext, CGBitmapContext
+* CGDataProvider, CGDataProviderCreateDirect

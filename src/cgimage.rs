@@ -9,3 +9,4 @@ impl CGImageAlphaInfo {
     pub const NONE_SKIP_FIRST: CGImageAlphaInfo = CGImageAlphaInfo(6);
     pub const ONLY: CGImageAlphaInfo = CGImageAlphaInfo(7);
 }
+
