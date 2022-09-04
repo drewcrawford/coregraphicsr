@@ -38,6 +38,6 @@ impl CGContext {
     #[test] fn smoke() {
         let color_space = CGColorSpace::with_name(&Name::generic_rgb());
         let mut vec: Vec<u8> = vec![0; 4]; //8-bit color, 4 channels, 1x1, skip last
-        let context = unsafe{CGContext::createBitmap(vec.as_mut_ptr() as *mut c_void, 1, 1, 8, 4, &color_space, CGImageAlphaInfo::NONE_SKIP_LAST.0)}.unwrap();
+        let _ = unsafe{CGContext::createBitmap(vec.as_mut_ptr() as *mut c_void, 1, 1, 8, 4, &color_space, CGImageAlphaInfo::NONE_SKIP_LAST.0)}.unwrap();
     }
 }

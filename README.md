@@ -19,3 +19,4 @@ The following APIs are implemented
 * CGImageAlphaInfo
 * CGContext, CGBitmapContext
 * CGDataProvider, CGDataProviderCreateDirect
+* CGImage

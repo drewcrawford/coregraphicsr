@@ -167,6 +167,16 @@ impl Name {
     }
 }
 
+#[repr(transparent)]
+pub struct CGColorRenderingIntent(pub i32);
+
+impl CGColorRenderingIntent {
+    pub const DEFAULT: CGColorRenderingIntent = CGColorRenderingIntent(0);
+    pub const ABSOLUTE_COLORIMETRIC: CGColorRenderingIntent = CGColorRenderingIntent(1);
+    pub const RELATIVE_COLORIMETRIC: CGColorRenderingIntent = CGColorRenderingIntent(2);
+    pub const PERCEPTUAL: CGColorRenderingIntent = CGColorRenderingIntent(3);
+    pub const SATURATION: CGColorRenderingIntent = CGColorRenderingIntent(4);
+}
 extern "C" {
     fn CGColorSpaceCreateWithName(name: &CFString) -> *mut CGColorSpace;
 }

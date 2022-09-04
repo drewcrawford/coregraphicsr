@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 use std::os::raw::{c_uint, c_void};
-use core_foundationr::{StrongCell,CFType};
+use core_foundationr::{StrongCell,StrongMutCell,CFType};
 
 #[allow(non_snake_case)] pub type CGDataProviderGetBytePointerCallback = extern "C" fn(nullable_info: *mut c_void) -> *mut c_void; //nullable return
 #[allow(non_snake_case)] pub type CGDataProviderReleaseBytePointerCallback = extern "C" fn(nullable_info: *mut c_void, pointer: *const c_void);
@@ -27,8 +27,11 @@ extern "C" fn raw_get_pointer(info: *mut c_void) -> *mut c_void {
     info
 }
 
+/**
+A custom [CGDataProvider] that wraps a slice of bytes.
+*/
 #[repr(transparent)]
-struct SliceProvider<'s>(CGDataProvider, PhantomData<&'s mut ()>);
+pub struct SliceProvider<'s>(CGDataProvider, PhantomData<&'s mut ()>);
 impl<'s> CFType for SliceProvider<'s> {}
 
 #[allow(non_snake_case)]
@@ -48,7 +51,7 @@ impl CGDataProvider {
     }
 }
 impl<'s> SliceProvider<'s> {
-    pub fn new(slice: &'s mut [u8]) -> Option<StrongCell<Self>> {
+    pub fn new(slice: &'s mut [u8]) -> Option<StrongMutCell<Self>> {
         let callbacks = CGDataProviderDirectCallbacks {
             version: 0,
             getBytePointer: Some(raw_get_pointer),
@@ -60,9 +63,11 @@ impl<'s> SliceProvider<'s> {
             use core_foundationr::CFTypeBehavior;
             let ptr = provider.as_ptr() as *const Self;
             std::mem::forget(provider);
-            StrongCell::assuming_retained_nonnull(ptr)
+            StrongCell::assuming_retained_nonnull(ptr).assuming_mut()
         })}
-
+    }
+    pub fn as_provider_mut(&mut self) -> &mut CGDataProvider {
+        &mut self.0
     }
 }
 
