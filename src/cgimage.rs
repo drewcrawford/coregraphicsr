@@ -22,6 +22,7 @@ unsafe impl Arguable for CGImage{}
 
 extern "C" {
     fn CGImageCreate(width: usize, height: usize, bitsPerComponent: usize, bitsPerPixel: usize, bytesPerRow: usize, space: *const CGColorSpace, bitmapInfo: u32, provider: *const CGDataProvider, decode: *const CGFloat, shouldInterpolate: bool, intent: CGColorRenderingIntent) -> *const CGImage;
+    fn CGImageGetDataProvider(image: *const CGImage) -> *const CGDataProvider;
 }
 impl CFType for CGImage {}
 #[allow(non_snake_case)]
@@ -42,6 +43,14 @@ impl CGImage {
             Some(StrongCell::assuming_retained_nonnull(image).assuming_mut())
         }
     }
+    pub fn getDataProvider(&self) -> Option<StrongCell<CGDataProvider>> {
+        let raw = unsafe{CGImageGetDataProvider(self)};
+        if raw.is_null() {
+            None
+        } else {
+            Some(unsafe{StrongCell::retain_assuming_nonnull(raw)})
+        }
+    }
 }
 
 #[cfg(test)] mod tests {
@@ -51,6 +60,8 @@ impl CGImage {
     #[test] fn smoke() {
         let mut bytes: [u8; 4] = [0; 4];
         let mut provider = SliceProvider::new(&mut bytes).unwrap();
-        let _ = unsafe{CGImage::create(1, 1, 8, 32, 4, &CGColorSpace::with_name(Name::generic_rgb()), CGImageAlphaInfo::NONE,provider.as_provider_mut(), None, false, CGColorRenderingIntent::DEFAULT)}.unwrap();
+        let image = unsafe{CGImage::create(1, 1, 8, 32, 4, &CGColorSpace::with_name(Name::generic_rgb()), CGImageAlphaInfo::NONE,provider.as_provider_mut(), None, false, CGColorRenderingIntent::DEFAULT)}.unwrap();
+        let provider = image.getDataProvider().unwrap();
+        let _ = provider.copyData().unwrap();
     }
 }

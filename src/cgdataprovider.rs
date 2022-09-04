@@ -20,6 +20,7 @@ pub struct CGDataProviderDirectCallbacks {
 pub struct CGDataProvider(c_void);
 extern "C" {
     fn CGDataProviderCreateDirect(nullable_info: *mut c_void, size: usize, callbacks: *const CGDataProviderDirectCallbacks) -> *const CGDataProvider;
+    fn CGDataProviderCopyData(provider: *const CGDataProvider) -> *const core_foundationr::CFData;
 }
 impl CFType for CGDataProvider {}
 
@@ -47,6 +48,16 @@ impl CGDataProvider {
             None
         } else {
             Some(StrongCell::assuming_retained_nonnull(context))
+        }
+    }
+    pub fn copyData(&self) -> Option<StrongCell<core_foundationr::CFData>> {
+        unsafe {
+            let data = CGDataProviderCopyData(self);
+            if data.is_null() {
+                None
+            } else {
+                Some(StrongCell::assuming_retained_nonnull(data))
+            }
         }
     }
 }
