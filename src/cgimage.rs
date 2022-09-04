@@ -15,6 +15,7 @@ impl CGImageAlphaInfo {
     pub const ONLY: CGImageAlphaInfo = CGImageAlphaInfo(7);
 }
 #[repr(transparent)]
+#[derive(Debug)]
 pub struct CGImage(c_void);
 unsafe impl Arguable for CGImage{}
 
