@@ -1,6 +1,6 @@
 use std::os::raw::c_void;
 use crate::{CGColorRenderingIntent, CGColorSpace, CGDataProvider, CGFloat};
-use core_foundationr::{StrongCell,CFType};
+use core_foundationr::{StrongCell,CFType,StrongMutCell};
 use objr::bindings::Arguable;
 
 pub struct CGImageAlphaInfo(pub u32);
@@ -33,13 +33,13 @@ impl CGImage {
     * Exceptions
     * The image might be bound to the lifetime of the provided data.  Currently this is not statically checked.
     */
-    pub unsafe fn create(width: usize, height: usize, bitsPerComponent: usize, bitsPerPixel: usize, bytesPerRow: usize, space: &CGColorSpace, bitmapInfo: CGImageAlphaInfo, provider: &mut CGDataProvider, decode: Option<&[CGFloat]>, shouldInterpolate: bool, intent: CGColorRenderingIntent) -> Option<StrongCell<CGImage>> {
+    pub unsafe fn create(width: usize, height: usize, bitsPerComponent: usize, bitsPerPixel: usize, bytesPerRow: usize, space: &CGColorSpace, bitmapInfo: CGImageAlphaInfo, provider: &mut CGDataProvider, decode: Option<&[CGFloat]>, shouldInterpolate: bool, intent: CGColorRenderingIntent) -> Option<StrongMutCell<CGImage>> {
         let decode = decode.map(|x| x.as_ptr()).unwrap_or(std::ptr::null());
         let image = CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, space, bitmapInfo.0, provider, decode, shouldInterpolate, intent);
         if image.is_null() {
             None
         } else {
-            Some(StrongCell::assuming_retained_nonnull(image))
+            Some(StrongCell::assuming_retained_nonnull(image).assuming_mut())
         }
     }
 }
