@@ -1,6 +1,7 @@
 use std::os::raw::c_void;
 use crate::{CGColorRenderingIntent, CGColorSpace, CGDataProvider, CGFloat};
 use core_foundationr::{StrongCell,CFType};
+use objr::bindings::Arguable;
 
 pub struct CGImageAlphaInfo(pub u32);
 impl CGImageAlphaInfo {
@@ -15,6 +16,8 @@ impl CGImageAlphaInfo {
 }
 #[repr(transparent)]
 pub struct CGImage(c_void);
+unsafe impl Arguable for CGImage{}
+
 
 extern "C" {
     fn CGImageCreate(width: usize, height: usize, bitsPerComponent: usize, bitsPerPixel: usize, bytesPerRow: usize, space: *const CGColorSpace, bitmapInfo: u32, provider: *const CGDataProvider, decode: *const CGFloat, shouldInterpolate: bool, intent: CGColorRenderingIntent) -> *const CGImage;
@@ -26,7 +29,8 @@ impl CGImage {
     CGImageCreate.
 
     # Safety
-    Exceptions
+    * Exceptions
+    * The image might be bound to the lifetime of the provided data.  Currently this is not statically checked.
     */
     pub unsafe fn create(width: usize, height: usize, bitsPerComponent: usize, bitsPerPixel: usize, bytesPerRow: usize, space: &CGColorSpace, bitmapInfo: CGImageAlphaInfo, provider: &mut CGDataProvider, decode: Option<&[CGFloat]>, shouldInterpolate: bool, intent: CGColorRenderingIntent) -> Option<StrongCell<CGImage>> {
         let decode = decode.map(|x| x.as_ptr()).unwrap_or(std::ptr::null());
