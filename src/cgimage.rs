@@ -3,6 +3,7 @@ use crate::{CGColorRenderingIntent, CGColorSpace, CGDataProvider, CGFloat};
 use core_foundationr::{StrongCell,CFType,StrongMutCell};
 use objr::bindings::Arguable;
 
+#[derive(PartialEq,Debug)]
 pub struct CGImageAlphaInfo(pub u32);
 impl CGImageAlphaInfo {
     pub const NONE: CGImageAlphaInfo = CGImageAlphaInfo(0);
@@ -23,6 +24,14 @@ unsafe impl Arguable for CGImage{}
 extern "C" {
     fn CGImageCreate(width: usize, height: usize, bitsPerComponent: usize, bitsPerPixel: usize, bytesPerRow: usize, space: *const CGColorSpace, bitmapInfo: u32, provider: *const CGDataProvider, decode: *const CGFloat, shouldInterpolate: bool, intent: CGColorRenderingIntent) -> *const CGImage;
     fn CGImageGetDataProvider(image: *const CGImage) -> *const CGDataProvider;
+    fn CGImageGetHeight(image: *const CGImage) -> usize;
+    fn CGImageGetWidth(image: *const CGImage) -> usize;
+    fn CGImageGetBitsPerComponent(image: *const CGImage) -> usize;
+    fn CGImageGetBitsPerPixel(image: *const CGImage) -> usize;
+    fn CGImageGetBytesPerRow(image: *const CGImage) -> usize;
+    fn CGImageGetColorSpace(image: *const CGImage) -> *const CGColorSpace;
+    fn CGImageGetAlphaInfo(image: *const CGImage) -> u32;
+
 }
 impl CFType for CGImage {}
 #[allow(non_snake_case)]
@@ -51,6 +60,32 @@ impl CGImage {
             Some(unsafe{StrongCell::retain_assuming_nonnull(raw)})
         }
     }
+    pub fn getWidth(&self) -> usize {
+        unsafe{CGImageGetWidth(self)}
+    }
+    pub fn getHeight(&self) -> usize {
+        unsafe{CGImageGetHeight(self)}
+    }
+    pub fn getBitsPerComponent(&self) -> usize {
+        unsafe{CGImageGetBitsPerComponent(self)}
+    }
+    pub fn getBitsPerPixel(&self) -> usize {
+        unsafe{CGImageGetBitsPerPixel(self)}
+    }
+    pub fn getBytesPerRow(&self) -> usize {
+        unsafe{CGImageGetBytesPerRow(self)}
+    }
+    pub fn getColorSpace(&self) -> Option<StrongCell<CGColorSpace>> {
+        let raw = unsafe{CGImageGetColorSpace(self)};
+        if raw.is_null() {
+            None
+        } else {
+            Some(unsafe{StrongCell::retain_assuming_nonnull(raw)})
+        }
+    }
+    pub fn getAlphaInfo(&self) -> CGImageAlphaInfo {
+        CGImageAlphaInfo(unsafe{CGImageGetAlphaInfo(self)})
+    }
 }
 
 #[cfg(test)] mod tests {
@@ -60,8 +95,16 @@ impl CGImage {
     #[test] fn smoke() {
         let mut bytes: [u8; 4] = [0; 4];
         let mut provider = SliceProvider::new(&mut bytes).unwrap();
-        let image = unsafe{CGImage::create(1, 1, 8, 32, 4, &CGColorSpace::with_name(Name::generic_rgb()), CGImageAlphaInfo::NONE,provider.as_provider_mut(), None, false, CGColorRenderingIntent::DEFAULT)}.unwrap();
+        let image = unsafe{CGImage::create(1, 1, 8, 32, 4, &CGColorSpace::with_name(Name::generic_rgb()), CGImageAlphaInfo::NONE_SKIP_LAST,provider.as_provider_mut(), None, false, CGColorRenderingIntent::DEFAULT)}.unwrap();
         let provider = image.getDataProvider().unwrap();
+        assert_eq!(image.getWidth(), 1);
+        assert_eq!(image.getHeight(), 1);
+        assert_eq!(image.getBitsPerComponent(), 8);
+        assert_eq!(image.getBitsPerPixel(), 32);
+        assert_eq!(image.getBytesPerRow(), 4);
+        assert!(image.getColorSpace().is_some());
+        assert_eq!(image.getAlphaInfo(), CGImageAlphaInfo::NONE_SKIP_LAST);
         let _ = provider.copyData().unwrap();
+
     }
 }
