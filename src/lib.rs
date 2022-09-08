@@ -34,7 +34,7 @@ mod cgdataprovider;
 
 use objr::bindings::*;
 
-pub use cgcolor::CGColorRef;
+pub use cgcolor::*;
 pub use cgdirectdisplay::CGDirectDisplayID;
 pub use cgcolorspace::*;
 pub use cgimage::*;
